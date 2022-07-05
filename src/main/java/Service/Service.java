@@ -1,5 +1,7 @@
 package Service;
 
+import dao.ItemPersistenceException;
+import dao.VendingMachineAuditDao;
 import dao.VendingMachineDao;
 import dao.VendingMachineDaoException;
 import dto.Item;
@@ -8,10 +10,13 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public class Service {
-    public Service(VendingMachineDao dao){
+
+    public Service(VendingMachineDao dao, VendingMachineAuditDao auditDao){
         this.dao = dao;
+        this.auditDao = auditDao;
     }
     private VendingMachineDao dao;
+    private VendingMachineAuditDao auditDao;
 
     public List<Item> getAllItems() throws VendingMachineDaoException {
         return new ArrayList(dao.getAllItems().stream().filter((p) -> p.getStock() > 0).toList());
@@ -22,7 +27,19 @@ public class Service {
         Item item = dao.getItem(selection);
         if(item.getStock() > 0){
             dao.decrementStock(selection);
-        } else throw new NoItemInInventoryException("Insufficient inventory");
+            try{
+                auditDao.writeAuditEntry(selection + " stock reduced by 1");
+            } catch(ItemPersistenceException e){
+                System.out.println("Audit failure");
+            }
+        } else{
+            try{
+                auditDao.writeAuditEntry("Insufficient stock for " + selection);
+            } catch(ItemPersistenceException e){
+                System.out.println("Audit failure");
+            }
+            throw new NoItemInInventoryException("Insufficient inventory");
+        }
         // if stock is above 0 then decrement else throw exception
     }
 
@@ -37,12 +54,22 @@ public class Service {
     public BigDecimal newMoney(BigDecimal money, String selection) throws VendingMachineDaoException {
         Item item = dao.getItem(selection);
         BigDecimal price = item.getPrice();
+        try{
+            auditDao.writeAuditEntry("Reducing balance by " + price);
+        } catch(ItemPersistenceException e){
+            System.out.println("Audit failure");
+        }
         return money.subtract(price);
     }
 
     public void checkFunds(String selection, BigDecimal money) throws InsufficientFundsException, VendingMachineDaoException {
         Item item = dao.getItem(selection);
         if(money.compareTo(item.getPrice()) < 0){
+            try{
+                auditDao.writeAuditEntry("Insufficient balance for " + selection);
+            } catch(ItemPersistenceException e){
+                System.out.println("Audit failure");
+            }
             throw new InsufficientFundsException("Insufficient funds");
         }
     }
@@ -50,6 +77,15 @@ public class Service {
     public List<Integer> returnChange(BigDecimal money) {
         BigDecimal zero = new BigDecimal("0.00");
         List<Integer> coins = new ArrayList<>(Arrays.asList(0,0,0,0,0,0,0,0));
+        try{
+            if(money.equals(zero)){
+                auditDao.writeAuditEntry("No change given ");
+            } else {
+                auditDao.writeAuditEntry("Returning change for " + money);
+            }
+        } catch(ItemPersistenceException e){
+            System.out.println("Audit failure");
+        }
         while(money.compareTo(zero) != 0){
             while(money.compareTo(Change.TWO_POUNDS.value)>=0){
                 int num = coins.get(0);
@@ -93,6 +129,15 @@ public class Service {
             }
 
         }
+
         return coins;
+    }
+
+    public void log(String string) {
+        try{
+            auditDao.writeAuditEntry(string);
+        } catch(ItemPersistenceException e){
+            System.out.println("Audit failure");
+        }
     }
 }

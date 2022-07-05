@@ -1,6 +1,7 @@
 package ui;
 
 import Service.Change;
+import dao.VendingMachineAuditDao;
 import dto.Item;
 
 import java.math.BigDecimal;
@@ -35,7 +36,9 @@ public class VendingMachineView {
     }
 
     public BigDecimal getUserCash() {
+
         return io.readBigDecimal(2); // takes scale argument
+
     }
 
     public String getSelection(){

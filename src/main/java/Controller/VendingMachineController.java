@@ -1,5 +1,6 @@
 package Controller;
 import Service.Service;
+import dao.ItemPersistenceException;
 import dao.VendingMachineDaoException;
 import Service.NoItemInInventoryException;
 import Service.SelectionNotInListException;
@@ -75,6 +76,7 @@ public class VendingMachineController { // controller now can't talk to dao - mu
     }
     private void getCashInserted(){
         money = money.add(view.getUserCash());
+        service.log("added " + money + " to balance");
     }
     private void exitMessage() {
         view.displayExitMessage();

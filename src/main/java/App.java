@@ -1,5 +1,7 @@
 import Controller.VendingMachineController;
 import Service.Service;
+import dao.VendingMachineAuditDao;
+import dao.VendingMachineAuditDaoImpl;
 import dao.VendingMachineDao;
 import dao.VendingMachineDaoFileImpl;
 import ui.UserIO;
@@ -11,7 +13,8 @@ public class App {
         UserIO myIo = new UserIOConsoleImpl();
         VendingMachineView myView = new VendingMachineView(myIo);
         VendingMachineDao myDao = new VendingMachineDaoFileImpl();
-        Service myService = new Service(myDao);
+        VendingMachineAuditDao auditDao = new VendingMachineAuditDaoImpl();
+        Service myService = new Service(myDao, auditDao);
         VendingMachineController controller = new VendingMachineController(myView, myService);
         controller.run();
     }
