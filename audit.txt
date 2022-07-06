@@ -1,0 +1,17 @@
+2022-07-05T14:16:07.222064200 : added 9.00 to balance
+2022-07-05T14:16:10.771368500 : Fanta stock reduced by 1
+2022-07-05T14:16:10.772366300 : Reducing balance by 0.99
+2022-07-05T14:16:10.773362800 : Returning change for 8.01
+2022-07-05T14:16:21.526195900 : added 56.97 to balance
+2022-07-05T14:16:27.044824300 : Marathon stock reduced by 1
+2022-07-05T14:16:27.045850400 : Reducing balance by 2.65
+2022-07-05T14:16:27.045850400 : Returning change for 54.32
+2022-07-05T14:16:39.686999200 : added 0.00 to balance
+2022-07-05T14:18:14.421934200 : added 0.00 to balance
+2022-07-05T14:18:15.823690900 : Returning change for 0.00
+2022-07-05T14:20:23.533446500 : added 5.00 to balance
+2022-07-05T14:20:31.444830600 : Marathon stock reduced by 1
+2022-07-05T14:20:31.446825100 : Reducing balance by 2.65
+2022-07-05T14:20:31.447822400 : Returning change for 2.35
+2022-07-05T14:20:54.967438700 : added 0.00 to balance
+2022-07-05T14:20:56.638831800 : No change given 
